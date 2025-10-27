@@ -1,0 +1,1985 @@
+﻿<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestion Empresarial</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    section { scroll-margin-top: 64px; }
+  </style>
+  </head>
+<body>
+<nav style="position:sticky;top:0;z-index:10;background:#111827;color:#fff;padding:.5rem 1rem;display:flex;gap:1rem;flex-wrap:wrap">
+  <a href="#resumen" style="color:#fff;text-decoration:none;font-weight:600">Dashboard</a>
+  <a href="#clientes" style="color:#fff;text-decoration:none;">Clientes</a>
+  <a href="#productos" style="color:#fff;text-decoration:none;">Productos</a>
+  <a href="#marcas" style="color:#fff;text-decoration:none;">Marcas</a>
+  <a href="#monedas" style="color:#fff;text-decoration:none;">Monedas</a>
+  <a href="#departamentos" style="color:#fff;text-decoration:none;">Departamentos</a>
+  <a href="#ciudades" style="color:#fff;text-decoration:none;">Ciudades</a>
+  <a href="#cajas" style="color:#fff;text-decoration:none;">Cajas</a>
+  <a href="#proveedores" style="color:#fff;text-decoration:none;">Proveedores</a>
+  <a href="#stock" style="color:#fff;text-decoration:none;">Stock</a>
+  <a href="#ventas" style="color:#fff;text-decoration:none;">Ventas</a>
+  <a href="#pedidos" style="color:#fff;text-decoration:none;">Pedidos</a>
+  <a href="#compras" style="color:#fff;text-decoration:none;">Compras</a>
+  <a href="#cobros" style="color:#fff;text-decoration:none;">Cobros</a>
+  <a href="#empleados" style="color:#fff;text-decoration:none;">Empleados</a>
+  <a href="#usuarios" style="color:#fff;text-decoration:none;">Usuarios</a>
+  <a href="#arqueos" style="color:#fff;text-decoration:none;">Arqueos</a>
+  <a href="#cobrotipos" style="color:#fff;text-decoration:none;">Tipos Cobro</a>
+  <a href="#pagos" style="color:#fff;text-decoration:none;">Pagos</a>
+  <a href="#presupuestos" style="color:#fff;text-decoration:none;">Presupuestos</a>
+  <a href="#ajustes" style="color:#fff;text-decoration:none;">Ajustes</a>
+  <a href="#ajustetipos" style="color:#fff;text-decoration:none;">Tipos Ajuste</a>
+  <a href="#cotizaciones" style="color:#fff;text-decoration:none;">Cotizaciones</a>
+  <a href="#cuentas" style="color:#fff;text-decoration:none;">Cuentas</a>
+  <a href="#devoluciones-proveedor" style="color:#fff;text-decoration:none;">Devoluciones</a>
+</nav>
+
+<header>
+  <h1>Panel de Gestion Empresarial</h1>
+  <p>Resumen en vivo de las tablas principales del sistema.</p>
+  <div class="alert success" th:if="${mensajeExito}" th:text="${mensajeExito}"></div>
+  <div class="alert error" th:if="${mensajeError}" th:text="${mensajeError}"></div>
+</header>
+
+<section id="resumen" class="resumen">
+  <h2>Resumen resumen rapido</h2>
+  <div class="cards">
+    <div class="card" th:each="entry : ${resumenConteos}">
+      <span class="card-title" th:text="${entry.key}">Entidad</span>
+      <span class="card-value" th:text="${entry.value}">0</span>
+    </div>
+  </div>
+</section>
+<section id="clientes">
+  <h2>Clientes</h2>
+  <form id="form-cliente" class="inline-form" th:action="@{/clientes}" th:object="${clienteForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+    <input type="text" th:field="*{apellido}" placeholder="Apellido" required>
+    <input type="text" th:field="*{ci}" placeholder="Documento (CI)" required>
+    <input type="email" th:field="*{email}" placeholder="Correo electronico">
+    <input type="text" th:field="*{telefono}" placeholder="Telefono">
+    <input type="text" th:field="*{direccion}" placeholder="Direccion">
+    <select th:field="*{sexo}" required>
+      <option value="">Sexo...</option>
+      <option value="M">M</option>
+      <option value="F">F</option>
+    </select>
+    <select th:field="*{ciudad.id}" required>
+      <option value="">Ciudad...</option>
+      <option th:each="ciudad : ${ciudades}" th:value="${ciudad.id}" th:text="${ciudad.nombre}">Ciudad</option>
+    </select>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>CI</th>
+      <th>Correo</th>
+      <th>Telefono</th>
+      <th>Direccion</th>
+      <th>Sexo</th>
+      <th>Ciudad</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cliente : ${clientes}">
+      <td th:text="${cliente.id}">1</td>
+      <td th:text="${cliente.nombre}">Nombre</td>
+      <td th:text="${cliente.apellido}">Apellido</td>
+      <td th:text="${cliente.ci}">Documento</td>
+      <td th:text="${cliente.email}">Correo</td>
+      <td th:text="${cliente.telefono}">Telefono</td>
+      <td th:text="${cliente.direccion}">Direccion</td>
+      <td th:text="${cliente.sexo}">Sexo</td>
+      <td th:text="${cliente.ciudad?.nombre}" th:data-ciudad_id="${cliente.ciudad?.id}">Ciudad</td>
+      <td class="actions">
+        <form th:action="@{/clientes/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar cliente?');">
+          <input type="hidden" name="id" th:value="${cliente.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(clientes)}">
+      <td colspan="10">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="productos">
+  <h2>Productos</h2>
+  <form id="form-producto" class="inline-form" th:action="@{/productos}" th:object="${productoForm}" method="post">
+    <input type="text" th:field="*{id}" placeholder="Codigo (hasta 13)" required>
+    <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+    <input type="text" th:field="*{descripcion}" placeholder="Descripcion">
+    <select th:field="*{marca.id}" required>
+      <option value="">Marca...</option>
+      <option th:each="m : ${marcas}" th:value="${m.id}" th:text="${m.descripcion}">Marca</option>
+    </select>
+    <input type="number" th:field="*{precioCompra}" placeholder="Precio compra" step="0.01" required>
+    <input type="text" th:field="*{iva}" placeholder="IVA (p. ej. 10%)">
+  </form> <!-- La tabla debe estar fuera del formulario para un HTML correcto -->
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripcion</th>
+      <th>Marca</th>
+      <th>Precio Compra</th>
+      <th>IVA</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="producto : ${productos}">
+      <td th:text="${producto.id}">1</td>
+      <td th:text="${producto.nombre}">Producto</td>
+      <td th:text="${producto.descripcion}">Descripcion</td>
+      <td th:text="${producto.marca?.descripcion}" th:data-marca_id="${producto.marca?.id}">Marca</td>
+      <td th:text="${#numbers.formatDecimal(producto.precioCompra,1,2)}">0.00</td>
+      <td th:text="${producto.iva}">0%</td>
+      <td class="actions">
+        <form th:action="@{/productos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar producto?');">
+          <input type="hidden" name="id" th:value="${producto.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(productos)}">
+      <td colspan="7">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="marcas">
+  <h2>Marcas</h2>
+  <form id="form-marca" class="inline-form" th:action="@{/marcas}" th:object="${marcaForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{descripcion}" placeholder="Descripcion" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Descripcion</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${marcas}">
+      <td th:text="${m.id}">1</td>
+      <td th:text="${m.descripcion}">Marca</td>
+      <td class="actions">
+        <form th:action="@{/marcas/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar marca?');">
+          <input type="hidden" name="id" th:value="${m.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(marcas)}">
+      <td colspan="3">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="presupuesto-detalle">
+  <h2>Presupuesto – Detalle</h2>
+  <form id="form-presupuesto-detalle" class="inline-form" th:action="@{/presupuestos/detalle}" method="post">
+    <select name="presId" required>
+      <option value="">Presupuesto...</option>
+      <option th:each="pr : ${presupuestos}" th:value="${pr.id}" th:text="${pr.id}">1</option>
+    </select>
+    <select name="prodId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad">
+    <input name="precioUnitario" type="number" step="0.01" placeholder="Precio">
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Presupuesto</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="det : ${presupuestoDetalles}">
+      <td th:text="${det.presId}" th:data-presId="${det.presId}">1</td>
+      <td th:text="${det.producto?.nombre}" th:data-prodId="${det.producto?.id}">Prod</td>
+      <td th:text="${#numbers.formatDecimal(det.presdetCantidad,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(det.presdetPrecioUnitario,1,2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/presupuestos/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="presId" th:value="${det.presId}">
+          <input type="hidden" name="prodId" th:value="${det.producto?.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(presupuestoDetalles)}">
+      <td colspan="5">Sin datos todavía.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="orden-pago-detalle">
+  <h2>Orden de Pago – Detalle</h2>
+  <form id="form-orden-pago-detalle" class="inline-form" th:action="@{/ordenes-pago/detalle}" method="post" data-composite-pk="true">
+    <select name="ordpagNumero" required>
+      <option value="">Orden...</option>
+      <option th:each="op : ${ordenesPago}" th:value="${op.numero}" th:text="${op.numero}">1</option>
+    </select>
+    <input type="number" name="cuotaNumero" placeholder="Cuota" required>
+    <select name="compNumerofactura" required>
+      <option value="">Factura...</option>
+      <option th:each="c : ${compras}" th:value="${c.numeroFactura}" th:text="${c.numeroFactura}">F001</option>
+    </select>
+    <input type="number" step="0.01" name="monto" placeholder="Monto">
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Orden</th>
+      <th>Cuota</th>
+      <th>Factura</th>
+      <th>Monto</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="d : ${ordenPagoDetalles}">
+      <td th:text="${d.ordenDePagoOrdpagNumero}">1</td>
+      <td th:text="${d.cuenpagNumerocuota}">1</td>
+      <td th:text="${d.compNumerofactura}">FAC</td>
+      <td th:text="${#numbers.formatDecimal(d.monto,1,2)}">0.00</td>
+      <td>
+        <form class="delete-form" th:action="@{/ordenes-pago/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="ordpagNumero" th:value="${d.ordenDePagoOrdpagNumero}">
+          <input type="hidden" name="cuotaNumero" th:value="${d.cuenpagNumerocuota}">
+          <input type="hidden" name="compNumerofactura" th:value="${d.compNumerofactura}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${ordenPagoDetalles == null or #lists.isEmpty(ordenPagoDetalles)}">
+      <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="monedas">
+  <h2>Monedas</h2>
+  <form id="form-moneda" class="inline-form" th:action="@{/monedas}" th:object="${monedaForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{descripcion}" placeholder="Descripcion" required>
+    <input type="text" th:field="*{sigla}" placeholder="Sigla" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Descripcion</th>
+      <th>Sigla</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${monedas}">
+      <td th:text="${m.id}">1</td>
+      <td th:text="${m.descripcion}">Descripcion</td>
+      <td th:text="${m.sigla}">SIG</td>
+      <td class="actions">
+        <form th:action="@{/monedas/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar moneda?');">
+          <input type="hidden" name="id" th:value="${m.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(monedas)}">
+      <td colspan="4">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="departamentos">
+  <h2>Departamentos</h2>
+  <form id="form-departamento" class="inline-form" th:action="@{/departamentos}" th:object="${departamentoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+    <input type="text" th:field="*{capital}" placeholder="Capital">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Capital</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="d : ${departamentos}">
+      <td th:text="${d.id}">1</td>
+      <td th:text="${d.nombre}">Departamento</td>
+      <td th:text="${d.capital}">Capital</td>
+      <td class="actions">
+        <form th:action="@{/departamentos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar departamento?');">
+          <input type="hidden" name="id" th:value="${d.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(departamentos)}">
+      <td colspan="4">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="ciudades">
+  <h2>Ciudades</h2>
+  <form id="form-ciudad" class="inline-form" th:action="@{/ciudades}" th:object="${ciudadForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre de la ciudad" required>
+    <select th:field="*{departamento.id}" required>
+      <option value="">Departamento...</option>
+      <option th:each="d : ${departamentos}" th:value="${d.id}" th:text="${d.nombre}"></option>
+    </select>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Departamento</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ciudad : ${ciudades}">
+      <td th:text="${ciudad.id}">1</td>
+      <td th:text="${ciudad.nombre}">Ciudad</td>
+      <td th:text="${ciudad.departamento?.nombre}" th:data-departamento_id="${ciudad.departamento?.id}">Departamento</td>
+      <td class="actions">
+        <form th:action="@{/ciudades/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar ciudad?');">
+          <input type="hidden" name="id" th:value="${ciudad.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ciudades)}">
+      <td colspan="4">Sin datos todavia.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+<section id="cajas">
+  <h2>Cajas</h2>
+  <form id="form-caja" class="inline-form" th:action="@{/cajas}" th:object="${cajaForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{descripcion}" placeholder="Descripcion" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Descripcion</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${cajas}">
+      <td th:text="${c.id}">1</td>
+      <td th:text="${c.descripcion}">Caja</td>
+      <td class="actions">
+        <form th:action="@{/cajas/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar caja?');">
+          <input type="hidden" name="id" th:value="${c.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cajas)}">
+      <td colspan="3">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="proveedores">
+  <h2>Proveedores</h2>
+  <form id="form-proveedor" class="inline-form" th:action="@{/proveedores}" th:object="${proveedorForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+    <input type="text" th:field="*{ruc}" placeholder="RUC" required>
+    <input type="text" th:field="*{direccion}" placeholder="Dirección">
+    <input type="text" th:field="*{telefono}" placeholder="Teléfono">
+    <input type="email" th:field="*{email}" placeholder="Email">
+    <input type="text" th:field="*{pagWeb}" placeholder="Página Web">
+    <select th:field="*{ciudad.id}">
+      <option value="">Ciudad...</option>
+      <option th:each="c : ${ciudades}" th:value="${c.id}" th:text="${c.nombre}">Ciudad</option>
+    </select>
+    <input type="text" th:field="*{observacion}" placeholder="Observación">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>RUC</th>
+      <th>Direccion</th>
+      <th>Telefono</th>
+      <th>Pagina Web</th>
+      <th>Correo</th>
+      <th>Observacion</th>
+      <th>Ciudad</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prov : ${proveedores}">
+      <td th:text="${prov.id}">1</td>
+      <td th:text="${prov.nombre}">Proveedor</td>
+      <td th:text="${prov.ruc}">RUC</td>
+      <td th:text="${prov.direccion}">Direccion</td>
+      <td th:text="${prov.telefono}">Telefono</td>
+      <td th:text="${prov.pagWeb}">www.example.com</td>
+      <td th:text="${prov.email}">contacto@proveedor.com</td>
+      <td th:text="${prov.observacion}">Observacion</td>
+      <td th:text="${prov.ciudad?.nombre}" th:data-ciudad_id="${prov.ciudad?.id}">Ciudad</td>
+      <td class="actions">
+        <form th:action="@{/proveedores/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar proveedor?');">
+          <input type="hidden" name="id" th:value="${prov.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(proveedores)}">
+      <td colspan="10">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="stock">
+  <h2>Stock</h2>
+  <form id="form-stock" class="inline-form" th:action="@{/stocks}" th:object="${stockForm}" method="post">
+    <select th:field="*{productId}" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input type="number" th:field="*{cantidadMin}" placeholder="Cantidad minima" step="0.01">
+    <input type="number" th:field="*{cantidadMax}" placeholder="Cantidad maxima" step="0.01">
+    <input type="number" th:field="*{cantidadActual}" placeholder="Cantidad actual" step="0.01" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Producto</th> <th>Min</th>
+      <th>Max</th>
+      <th>Actual</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${stocks}">
+      <td th:text="${s.producto?.nombre}" th:data-productId="${s.productId}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(s.cantidadMin,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(s.cantidadMax,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(s.cantidadActual,1,2)}">0</td>
+      <td class="actions">
+        <form th:action="@{/stocks/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar stock?');">
+          <input type="hidden" name="productId" th:value="${s.productId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(stocks)}">
+      <td colspan="5">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="ventas">
+  <h2>Ventas</h2>
+  <form id="form-venta" class="inline-form" th:action="@{/ventas}" th:object="${ventaForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{cliente.id}" required>
+      <option value="">Cliente...</option>
+      <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' ' + c.apellido}">Cliente</option>
+    </select>
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="text" th:field="*{tipo}" placeholder="Tipo">
+    <input type="text" th:field="*{estado}" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th> <th>Fecha Facturacion</th>
+      <th>Cliente</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="venta : ${ventas}">
+      <td th:text="${venta.id}">0</td>
+      <td th:text="${venta.fechaFacturacion}">2025-01-01</td>
+      <td th:text="${venta.cliente?.nombre + ' ' + venta.cliente?.apellido}" th:data-cliente_id="${venta.cliente?.id}">Cliente</td>
+      <td th:text="${venta.tipo}">T</td>
+      <td th:text="${venta.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/ventas/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar venta?');">
+          <input type="hidden" name="id" th:value="${venta.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ventas)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de venta</h3>
+  <form id="form-venta-detalle" class="inline-form" th:action="@{/ventas/detalle}" method="post" data-composite-pk="true">
+    <select name="venId" required>
+      <option value="">Venta...</option>
+      <option th:each="v : ${ventas}" th:value="${v.id}" th:text="${v.id}">1</option>
+    </select>
+    <select name="prodId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <input name="precioUnitario" type="number" step="0.01" placeholder="Precio" required>
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Venta ID</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="det : ${ventaDetalles}">
+      <td th:text="${det.ventaVenId}">1</td>
+      <td th:text="${det.producto?.nombre}" th:data-prodId="${det.stockProductoProdId}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(det.detventaCantidad,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(det.detventaPrecioUnitario,1,2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/ventas/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="venId" th:value="${det.ventaVenId}">
+          <input type="hidden" name="prodId" th:value="${det.stockProductoProdId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ventaDetalles)}">
+      <td colspan="5">Sin datos todavía.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="pedidos">
+  <h2>Pedidos de cliente</h2>
+  <form id="form-pedido-cliente" class="inline-form" th:action="@{/pedidos}" th:object="${pedidoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{cliente.id}" required>
+      <option value="">Cliente...</option>
+      <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' ' + c.apellido}">Cliente</option>
+    </select>
+    <input type="date" th:field="*{fechaPedido}" placeholder="Fecha del Pedido">
+    <select th:field="*{estado}">
+      <option value="">Estado...</option>
+      <option value="PEN">Pendiente</option>
+      <option value="COM">Completado</option>
+      <option value="CAN">Cancelado</option>
+      </select>
+    <select th:field="*{usuario.id}" required>
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Usuario</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidosClientes}">
+      <td th:text="${pedido.id}">1</td>
+      <td th:text="${pedido.cliente?.nombre + ' ' + pedido.cliente?.apellido}" th:data-cliente_id="${pedido.cliente?.id}">Cliente</td>
+      <td th:text="${pedido.fechaPedido}">2025-01-01</td>
+      <td th:text="${pedido.estado}">Estado</td>
+      <td th:text="${pedido.usuario?.nombre}" th:data-usuario_id="${pedido.usuario?.id}">Usuario</td>
+      <td class="actions">
+        <form th:action="@{/pedidos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar pedido?');">
+          <input type="hidden" name="id" th:value="${pedido.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(pedidosClientes)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3>Detalle de pedidos</h3>
+  <form id="form-pedido-cliente-detalle" class="inline-form" th:action="@{/pedidos/detalle}" method="post" data-composite-pk="true">
+    <select name="pedcliId" required>
+      <option value="">Pedido...</option>
+      <option th:each="p : ${pedidosClientes}" th:value="${p.id}" th:text="${p.id + ' - ' + (p.cliente != null ? p.cliente.nombre : '')}">Pedido</option>
+    </select>
+    <select name="stockProductProdId" required>
+      <option value="">Producto...</option>
+      <option th:each="prod : ${productos}" th:value="${prod.id}" th:text="${prod.nombre}">Producto</option>
+    </select>
+    <input name="peddetCantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <input name="peddetPrecio" type="number" step="0.01" placeholder="Precio" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Pedido</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="det : ${pedidoClienteDetalles}">
+      <td th:text="${det.pedcliId}">1</td>
+      <td th:text="${det.producto?.nombre}" th:data-stockProductoProdId="${det.stockProductoProdId}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(det.pedcliDetCantidad,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(det.pedcliDetPrecioUnitario,1,2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/pedidos/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="pedcliId" th:value="${det.pedcliId}">
+          <input type="hidden" name="stockProductProdId" th:value="${det.stockProductoProdId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(pedidoClienteDetalles)}">
+      <td colspan="5">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="compras">
+  <h2>Compras</h2>
+  <form id="form-compra" class="inline-form" th:action="@{/compras}" th:object="${compraForm}" method="post">
+    <select th:field="*{proveedor.id}">
+      <option value="">Proveedor...</option>
+      <option th:each="prov : ${proveedores}" th:value="${prov.id}" th:text="${prov.nombre}">Proveedor</option>
+    </select>
+    <input type="text" th:field="*{numeroFactura}" placeholder="Nro Factura" required>
+    <select th:field="*{ordenDeCompra.id}">
+      <option value="">Orden de Compra...</option>
+      <option th:each="oc : ${ordenesCompra}" th:value="${oc.id}" th:text="${oc.id}">Orden</option>
+    </select>
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="text" th:field="*{tipo}" placeholder="Tipo (p.e. CR)" maxlength="3">
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <input type="time" th:field="*{horaCompra}" placeholder="Hora">
+    <input type="date" th:field="*{fechaRegistro}" placeholder="Fecha Registro">
+    <input type="text" th:field="*{estado}" placeholder="Estado (p.e. PEN)" maxlength="3">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Nro Factura</th> <th>Fecha</th>
+      <th>Proveedor</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="compra : ${compras}">
+      <td th:text="${compra.numeroFactura}">F001</td>
+      <td th:text="${compra.fecha}">2025-01-01</td>
+      <td th:text="${compra.proveedor?.nombre}" th:data-proveedor_id="${compra.proveedor?.id}">Proveedor</td>
+      <td th:text="${compra.tipo}">CR</td>
+      <td th:text="${compra.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/compras/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar compra?');">
+          <input type="hidden" name="numeroFactura" th:value="${compra.numeroFactura}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(compras)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de compra</h3>
+  <form id="form-compra-detalle" class="inline-form" th:action="@{/compras/detalle}" method="post" data-composite-pk="true">
+    <select name="compNumerofactura" required>
+      <option value="">Factura...</option>
+      <option th:each="c : ${compras}" th:value="${c.numeroFactura}" th:text="${c.numeroFactura}">F001</option>
+    </select>
+    <select name="stockProductoProdId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <input name="precioUnitario" type="number" step="0.01" placeholder="Precio" required>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Factura</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cd : ${compraDetalles}">
+      <td th:text="${cd.compNumerofactura}">F001</td>
+      <td th:text="${cd.producto?.nombre}" th:data-stockProductoProdId="${cd.stockProductoProdId}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(cd.cantidad,1,2)}">0</td>
+      <td th:text="${#numbers.formatDecimal(cd.precioUnitario,1,2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/compras/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="compNumerofactura" th:value="${cd.compNumerofactura}">
+          <input type="hidden" name="stockProductoProdId" th:value="${cd.stockProductoProdId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(compraDetalles)}">
+      <td colspan="5">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Pedido a proveedor</h3>
+  <form id="form-pedido-proveedor" class="inline-form" th:action="@{/pedidos-proveedor}" method="post">
+    <input type="hidden" name="id">
+    <select name="proveedorId" required>
+      <option value="">Proveedor...</option>
+      <option th:each="prov : ${proveedores}" th:value="${prov.id}" th:text="${prov.nombre}">Proveedor</option>
+    </select>
+    <select name="usuarioId">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input name="estado" type="text" placeholder="Estado">
+    <input name="fecha" type="date" placeholder="Fecha">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Proveedor</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Usuario</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pp : ${pedidosProveedores}">
+      <td th:text="${pp.id}">1</td>
+      <td th:text="${pp.proveedor?.nombre}" th:data-proveedorId="${pp.proveedor?.id}">Proveedor</td>
+      <td th:text="${pp.fecha}">2025-01-01</td>
+      <td th:text="${pp.estado}">PEN</td>
+      <td th:text="${pp.usuario?.nombre}" th:data-usuarioId="${pp.usuario?.id}">Usuario</td>
+      <td class="actions">
+        <form th:action="@{/pedidos-proveedor/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar pedido a proveedor?');">
+          <input type="hidden" name="id" th:value="${pp.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(pedidosProveedores)}">
+      <td colspan="6">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de pedido a proveedor</h3>
+  <!-- Debug: mostrar conteo de detalles cargados -->
+  <p><strong>Total detalles (pedido_proveedor_detalle):</strong> <span th:text="${#lists.size(pedidoProveedorDetalles)}">0</span></p>
+  <form id="form-pedido-proveedor-detalle" class="inline-form" th:action="@{/pedidos-proveedor/detalle}" method="post" data-composite-pk="true">
+    <select name="pedprovId" required>
+      <option value="">Pedido...</option>
+      <option th:each="pp : ${pedidosProveedores}" th:value="${pp.id}" th:text="${pp.id}">1</option>
+    </select>
+    <select name="productoId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <input name="precioUnitario" type="number" step="0.01" placeholder="Precio" required>
+  </form>
+  <table style="margin-top:1rem">
+    <thead>
+    <tr>
+      <th>Pedido ID</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ppd : ${pedidoProveedorDetalles}">
+      <td th:text="${ppd.pedidoProveedor?.id}">1</td>
+      <td th:text="${ppd.producto?.nombre}" th:data-productoId="${ppd.producto?.id}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(ppd.cantidad, 1, 2)}">0.00</td>
+      <td th:text="${#numbers.formatDecimal(ppd.precioUnitario, 1, 2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/pedidos-proveedor/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="pedprovId" th:value="${ppd.pedidoProveedor?.id}">
+          <input type="hidden" name="productoId" th:value="${ppd.producto?.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(pedidoProveedorDetalles)}">
+      <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Orden de compra</h3>
+  <form id="form-orden-compra" class="inline-form" th:action="@{/ordenes-compra}" method="post">
+    <input type="hidden" name="id">
+    <select name="pedprovId">
+      <option value="">Pedido Prov...</option>
+      <option th:each="pp : ${pedidosProveedores}" th:value="${pp.id}" th:text="${pp.id}">1</option>
+    </select>
+    <select name="usuarioId">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input name="estado" type="text" placeholder="Estado">
+    <input name="fecha" type="date" placeholder="Fecha">
+    <input name="hora" type="time" placeholder="Hora">
+  </form>
+  <h3 style="margin-top:1rem">Agregar detalle de orden de compra</h3>
+  <form id="form-orden-compra-detalle" class="inline-form" th:action="@{/ordenes-compra/detalle}" method="post" data-composite-pk="true">
+    <select name="ordcompId" required>
+      <option value="">Orden...</option>
+      <option th:each="oc : ${ordenesCompra}" th:value="${oc.id}" th:text="${oc.id}">1</option>
+    </select>
+    <select name="productoId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required> <!-- Corregido para coincidir con JS -->
+    <input name="precioUnitario" type="number" step="0.01" placeholder="Precio" required> <!-- Corregido para coincidir con JS -->
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Orden ID</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unit.</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ocd : ${ordenDeCompraDetalles}">
+      <td th:text="${ocd.ordenDeCompra?.id}">1</td>
+      <td th:text="${ocd.producto?.nombre}" th:data-productoId="${ocd.producto?.id}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(ocd.cantidad, 1, 2)}">0.00</td>
+      <td th:text="${#numbers.formatDecimal(ocd.precioUnitario, 1, 2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/ordenes-compra/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="ordcompId" th:value="${ocd.ordenDeCompra?.id}">
+          <input type="hidden" name="productoId" th:value="${ocd.producto?.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ordenDeCompraDetalles)}">
+      <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Listado de Órdenes de Compra</h3>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Pedido Prov.</th>
+      <th>Fecha</th>
+      <th>Hora</th>
+      <th>Usuario</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="oc : ${ordenesCompra}">
+      <td th:text="${oc.id}">1</td>
+      <td th:text="${oc.pedidoProveedor?.id}" th:data-pedprovId="${oc.pedidoProveedor?.id}">1</td>
+      <td th:text="${oc.fecha}">2025-01-01</td>
+      <td th:text="${oc.hora}">12:00</td>
+      <td th:text="${oc.usuario?.nombre}" th:data-usuarioId="${oc.usuario?.id}">Usuario</td>
+      <td th:text="${oc.estado}">PEN</td>
+      <td class="actions">
+        <form th:action="@{/ordenes-compra/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar orden de compra?');">
+          <input type="hidden" name="id" th:value="${oc.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ordenesCompra)}">
+      <td colspan="7">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+<section id="cobros">
+  <h2>Cobros</h2>
+  <form id="form-cobro" class="inline-form" th:action="@{/cobros}" th:object="${cobroForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{arqueo.id}" required>
+      <option value="">Arqueo...</option>
+      <option th:each="a : ${arqueos}" th:value="${a.id}" th:text="${a.id + ' - ' + (a.caja != null ? a.caja.descripcion : '')}">Arqueo</option>
+    </select>
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <input type="time" th:field="*{hora}" placeholder="Hora">
+    <input type="text" th:field="*{estado}" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Arqueo</th>
+      <th>Usuario</th>
+      <th>Fecha</th>
+      <th>Hora</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${cobros}">
+      <td th:text="${c.id}">1</td>
+      <td th:text="${c.arqueo?.id}" th:data-arqueo_id="${c.arqueo?.id}">1</td>
+      <td th:text="${c.usuario?.nombre}" th:data-usuario_id="${c.usuario?.id}">Usuario</td>
+      <td th:text="${c.fecha}">2025-01-01</td>
+      <td th:text="${c.hora}">12:00</td>
+      <td th:text="${c.estado}">PEN</td>
+      <td class="actions">
+        <form th:action="@{/cobros/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar cobro?');">
+          <input type="hidden" name="id" th:value="${c.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cobros)}">
+      <td colspan="7">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de cobro</h3>
+  <form id="form-cobro-detalle" class="inline-form" th:action="@{/cobros/detalle}" method="post" data-composite-pk="true">
+    <select name="cobId" required>
+      <option value="">Cobro...</option>
+      <option th:each="c : ${cobros}" th:value="${c.id}" th:text="${c.id}">1</option>
+    </select>
+    <select name="venId" required>
+      <option value="">Venta...</option>
+      <option th:each="v : ${ventas}" th:value="${v.id}" th:text="${v.id}">1</option>
+    </select>
+    <input name="cuotaNumero" type="number" placeholder="Nro Cuota" required>
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Cobro</th>
+      <th>Venta</th>
+      <th>Fecha</th>
+      <th>Acciones</th> </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cd : ${cobroDetalles}">
+      <td th:text="${cd.cobId}">1</td>
+      <td th:text="${cd.venId}" th:data-venId="${cd.venId}">1</td>
+      <td th:text="${cd.cobro?.fecha}">2025-01-01</td>
+      <td class="actions">
+        <form th:action="@{/cobros/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="cobId" th:value="${cd.cobId}">
+          <input type="hidden" name="venId" th:value="${cd.venId}">
+          <input type="hidden" name="cuotaNumero" th:value="${cd.cuotaNumero}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cobroDetalles)}">
+      <td colspan="4">Sin datos todavia.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+<section id="cobro-por">
+  <h2>Cobro Por Tipo</h2>
+  <form id="form-cobro-por" class="inline-form" th:action="@{/cobros/por}" method="post" data-composite-pk="true">
+    <select name="cobId" required>
+      <option value="">Cobro...</option>
+      <option th:each="c : ${cobros}" th:value="${c.id}" th:text="${c.id}">1</option>
+    </select>
+    <select name="venId" required>
+      <option value="">Venta...</option>
+      <option th:each="v : ${ventas}" th:value="${v.id}" th:text="${v.id}">1</option>
+    </select>
+    <input name="cuotaNumero" type="number" placeholder="Nro Cuota" required>
+    <select name="cobtipId" required>
+      <option value="">Tipo de Cobro...</option>
+      <option th:each="ct : ${cobroTipos}" th:value="${ct.id}" th:text="${ct.nombre}">Efectivo</option>
+    </select>
+    <input name="monto" type="number" step="0.01" placeholder="Monto" required>
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Cobro ID</th>
+      <th>Venta ID</th>
+      <th>Nro Cuota</th>
+      <th>Tipo Cobro</th>
+      <th>Monto</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cp : ${cobrosPor}">
+      <td th:text="${cp.id.cobroDetalleCobroCobId}">1</td>
+      <td th:text="${cp.id.cobroDetalleCuentaACobrarVentaVenId}">1</td>
+      <td th:text="${cp.id.cobroDetalleCuentaACobrarCuentcobCuotanumero}">1</td>
+      <td th:text="${cp.cobroTipo.nombre}">Efectivo</td>
+      <td th:text="${#numbers.formatDecimal(cp.monto, 1, 2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/cobros/por/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar forma de cobro?');">
+          <input type="hidden" name="cobId" th:value="${cp.id.cobroDetalleCobroCobId}">
+          <input type="hidden" name="venId" th:value="${cp.id.cobroDetalleCuentaACobrarVentaVenId}">
+          <input type="hidden" name="cuotaNumero" th:value="${cp.id.cobroDetalleCuentaACobrarCuentcobCuotanumero}">
+          <input type="hidden" name="cobtipId" th:value="${cp.id.cobroTipoCobtipId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cobrosPor)}">
+      <td colspan="6">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="pagos">
+  <h2>Pagos</h2>
+  <form id="form-pago" class="inline-form" th:action="@{/pagos}" th:object="${pagoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{ordenDePago.numero}">
+      <option value="">Orden de pago...</option>
+      <option th:each="op : ${ordenesPago}" th:value="${op.numero}" th:text="${op.numero}">Orden</option>
+    </select>
+    <input type="number" th:field="*{monto}" placeholder="Monto" step="0.01">
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <input type="text" th:field="*{estado}" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th> <th>Fecha</th>
+      <th>Monto</th>
+      <th>Orden de Pago</th>
+      <th>Usuario</th> <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${pagos}">
+      <td th:text="${p.id}">0</td>
+      <td th:text="${p.fecha}">2025-01-01</td>
+      <td th:text="${#numbers.formatDecimal(p.monto,1,2)}">0.00</td>
+      <td th:text="${p.ordenDePago?.numero}" th:data-ordenDePago_numero="${p.ordenDePago?.numero}">123</td>
+      <td th:text="${p.usuario?.nombre}" th:data-usuario_id="${p.usuario?.id}">Usuario</td>
+      <td th:text="${p.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/pagos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar pago?');">
+          <input type="hidden" name="id" th:value="${p.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(pagos)}">
+      <td colspan="7">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Crear orden de pago</h3>
+  <form id="form-orden-pago" class="inline-form" th:action="@{/ordenes-pago}" th:object="${ordenDePagoForm}" method="post">
+    <input type="hidden" th:field="*{numero}">
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="text" th:field="*{estado}" placeholder="Estado" maxlength="3">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Número</th>
+      <th>Fecha</th>
+      <th>Usuario</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="op : ${ordenesPago}">
+      <td th:text="${op.numero}">1</td>
+      <td th:text="${op.fecha}">2025-01-01</td>
+      <td th:text="${op.usuario?.nombre}" th:data-usuario_id="${op.usuario?.id}">Usuario</td>
+      <td th:text="${op.estado}">PEN</td>
+      <td></td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ordenesPago)}">
+      <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+<section id="presupuestos">
+  <h2>Presupuestos</h2>
+  <form id="form-presupuesto" class="inline-form" th:action="@{/presupuestos}" th:object="${presupuestoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{cliente.id}" required>
+      <option value="">Cliente...</option>
+      <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' ' + c.apellido}">Cliente</option>
+    </select>
+    <select th:field="*{usuario.id}" required>
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <input type="text" th:field="*{estado}" placeholder="Estado (p.e. PEN)" maxlength="3">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${presupuestos}">
+      <td th:text="${p.id}">1</td>
+      <td th:text="${p.cliente?.nombre + ' ' + p.cliente?.apellido}" th:data-cliente_id="${p.cliente?.id}">Cliente</td>
+      <td th:text="${p.fecha}">Fecha</td>
+      <td th:text="${p.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/presupuestos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar presupuesto?');">
+          <input type="hidden" name="id" th:value="${p.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+     <tr class="empty" th:if="${#lists.isEmpty(presupuestos)}"> <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="ajustes">
+  <h2>Ajustes</h2>
+  <form id="form-ajuste" class="inline-form" th:action="@{/ajustes}" th:object="${ajusteForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+     <input type="text" th:field="*{estado}" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th> <th>Estado</th>
+      <th>Fecha</th>
+      <th>Usuario</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="aj : ${ajustes}">
+      <td th:text="${aj.id}">0</td>
+      <td th:text="${aj.estado}">Estado</td>
+      <td th:text="${aj.fecha}">2025-01-01</td>
+      <td th:text="${aj.usuario?.nombre}" th:data-usuario_id="${aj.usuario?.id}">Usuario</td>
+      <td class="actions">
+        <form th:action="@{/ajustes/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar ajuste?');">
+          <input type="hidden" name="id" th:value="${aj.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ajustes)}">
+      <td colspan="5">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de ajuste</h3>
+  <form id="form-ajuste-detalle" class="inline-form" th:action="@{/ajustes/detalle}" method="post" data-composite-pk="true">
+    <select name="ajusId" required>
+      <option value="">Ajuste...</option>
+      <option th:each="aj : ${ajustes}" th:value="${aj.id}" th:text="${aj.id}">1</option>
+    </select>
+    <select name="ajustipId" required>
+      <option value="">Tipo...</option>
+      <option th:each="t : ${ajusteTipos}" th:value="${t.id}" th:text="${t.tipo}">Tipo</option>
+    </select>
+    <select name="prodId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Ajuste ID</th>
+      <th>Tipo Ajuste</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="det : ${ajustesDetalle}">
+      <td th:text="${det.ajusId}">1</td>
+      <td th:text="${det.tipo?.tipo}" th:data-ajustipId="${det.ajustipId}" th:data-prodId="${det.prodId}">TIPO</td>
+      <td th:text="${det.producto?.nombre}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(det.cantidad, 1, 2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/ajustes/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="ajusId" th:value="${det.ajusId}">
+          <input type="hidden" name="ajustipId" th:value="${det.ajustipId}">
+          <input type="hidden" name="prodId" th:value="${det.prodId}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ajustesDetalle)}">
+      <td colspan="5">Sin datos todavía.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="cobrotipos">
+  <h2>Tipos de cobro</h2>
+  <form id="form-cobrotipo" class="inline-form" th:action="@{/cobro-tipos}" th:object="${cobroTipoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+    <input type="text" th:field="*{descripcion}" placeholder="Descripcion">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripcion</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ct : ${cobroTipos}">
+      <td th:text="${ct.id}">1</td>
+      <td th:text="${ct.nombre}">Nombre</td>
+      <td th:text="${ct.descripcion}">Descripcion</td>
+      <td class="actions">
+        <form th:action="@{/cobro-tipos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar tipo de cobro?');">
+          <input type="hidden" name="id" th:value="${ct.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cobroTipos)}">
+      <td colspan="4">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="ajustetipos">
+  <h2>Tipos de ajuste</h2>
+  <form id="form-ajustetipo" class="inline-form" th:action="@{/ajuste-tipos}" th:object="${ajusteTipoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{tipo}" placeholder="Tipo" required>
+    <input type="text" th:field="*{motivo}" placeholder="Motivo">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Tipo</th>
+      <th>Motivo</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="at : ${ajusteTipos}">
+      <td th:text="${at.id}">1</td>
+      <td th:text="${at.tipo}">Tipo</td>
+      <td th:text="${at.motivo}">Motivo</td>
+      <td class="actions">
+        <form th:action="@{/ajuste-tipos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar tipo de ajuste?');">
+          <input type="hidden" name="id" th:value="${at.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(ajusteTipos)}">
+      <td colspan="4">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+<section id="cotizaciones">
+  <h2>Cotizaciones</h2>
+  <form id="form-cotizacion" class="inline-form" th:action="@{/cotizaciones}" th:object="${cotizacionForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{moneda.id}" required>
+      <option value="">Moneda...</option>
+      <option th:each="m : ${monedas}" th:value="${m.id}" th:text="${m.descripcion + ' (' + m.sigla + ')'}"></option>
+    </select>
+    <input type="number" th:field="*{precompra}" step="0.01" placeholder="Precompra">
+    <input type="number" th:field="*{preventa}" step="0.01" placeholder="Preventa">
+    <input type="date" th:field="*{fecha}">
+    <input type="time" th:field="*{hora}">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th> <th>Fecha</th>
+      <th>Moneda</th>
+      <th>Compra</th>
+      <th>Venta</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cot : ${cotizaciones}">
+      <td th:text="${cot.id}">0</td>
+      <td th:text="${cot.fecha}">2025-01-01</td>
+      <td th:text="${cot.moneda != null ? (cot.moneda.sigla != null ? cot.moneda.sigla : cot.moneda.descripcion) : 'N/D'}">USD</td>
+      <td th:text="${#numbers.formatDecimal(cot.precompra,1,2)}">0.00</td>
+      <td th:text="${#numbers.formatDecimal(cot.preventa,1,2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/cotizaciones/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar cotización?');">
+          <input type="hidden" name="id" th:value="${cot.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cotizaciones)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="cuentas">
+  <h2>Cuentas por cobrar</h2>
+  <form id="form-cuenta-cobrar" class="inline-form" th:action="@{/cuentas/cobrar}" method="post" data-composite-pk="true">
+    <select name="venId" required>
+      <option value="">Venta...</option>
+      <option th:each="v : ${ventas}" th:value="${v.id}" th:text="${v.id}">1</option>
+    </select>
+    <input type="number" name="cuotaNumero" placeholder="Nro cuota" required>
+    <input type="number" step="0.01" name="monto" placeholder="Monto">
+    <input type="date" name="fechaVencimiento" placeholder="Vence">
+    <input type="text" name="estado" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Venta</th>
+      <th>Nro Cuota</th> <th>Monto</th>
+      <th>Vencimiento</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cuenta : ${cuentasCobrar}">
+      <td th:text="${cuenta.venId}">1</td>
+      <td th:text="${cuenta.cuotaNumero}">1</td>
+      <td th:text="${#numbers.formatDecimal(cuenta.monto,1,2)}">0.00</td>
+      <td th:text="${cuenta.fechaVencimiento}">2025-01-01</td>
+      <td th:text="${cuenta.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/cuentas/cobrar/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar cuenta?');">
+          <input type="hidden" name="venId" th:value="${cuenta.venId}">
+          <input type="hidden" name="cuotaNumero" th:value="${cuenta.cuotaNumero}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cuentasCobrar)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h2 style="margin-top:2rem">Cuentas por pagar</h2>
+  <form id="form-cuenta-pagar" class="inline-form" th:action="@{/cuentas/pagar}" method="post" data-composite-pk="true">
+    <select name="compNumerofactura" required>
+      <option value="">Factura...</option>
+      <option th:each="c : ${compras}" th:value="${c.numeroFactura}" th:text="${c.numeroFactura}">F001</option>
+    </select>
+    <input type="number" name="cuotaNumero" placeholder="Nro cuota" required>
+    <input type="number" step="0.01" name="monto" placeholder="Monto">
+    <input type="text" name="estado" placeholder="Estado">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Factura Compra</th>
+      <th>Nro Cuota</th> <th>Monto</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cuenta : ${cuentasPagar}">
+      <td th:text="${cuenta.id?.compraNumerofactura}">F001</td>
+      <td th:text="${cuenta.id?.cuenpagNumerocuota}">1</td>
+      <td th:text="${#numbers.formatDecimal(cuenta.monto,1,2)}">0.00</td>
+      <td th:text="${cuenta.estado}">Estado</td>
+      <td class="actions">
+        <form th:action="@{/cuentas/pagar/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar cuenta?');">
+          <input type="hidden" name="cuotaNumero" th:value="${cuenta.id?.cuenpagNumerocuota}">
+          <input type="hidden" name="compNumerofactura" th:value="${cuenta.id?.compraNumerofactura}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(cuentasPagar)}">
+      <td colspan="5">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="devoluciones-proveedor">
+  <h2>Devoluciones a proveedor</h2>
+  <form id="form-devolucion-proveedor" class="inline-form" th:action="@{/devoluciones-proveedor}" th:object="${devolucionProveedorForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <select th:field="*{proveedor.id}">
+      <option value="">Proveedor...</option>
+      <option th:each="prov : ${proveedores}" th:value="${prov.id}" th:text="${prov.nombre}">Proveedor</option>
+    </select>
+    <select th:field="*{usuario.id}">
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}">Usuario</option>
+    </select>
+    <input type="date" th:field="*{fecha}" placeholder="Fecha">
+    <input type="text" th:field="*{estado}" placeholder="Estado" maxlength="3">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Proveedor</th>
+      <th>Fecha</th>
+      <th>Usuario</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="dev : ${devoluciones}">
+      <td th:text="${dev.id}">1</td>
+      <td th:text="${dev.proveedor?.nombre}" th:data-proveedor_id="${dev.proveedor?.id}">Proveedor</td>
+      <td th:text="${dev.fecha}">2025-01-01</td>
+      <td th:text="${dev.usuario?.nombre}" th:data-usuario_id="${dev.usuario?.id}">Usuario</td>
+      <td th:text="${dev.estado}">PEN</td>
+      <td class="actions">
+        <form th:action="@{/devoluciones-proveedor/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar devolución?');">
+          <input type="hidden" name="id" th:value="${dev.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(devoluciones)}">
+      <td colspan="6">Sin datos todavia.</td> </tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1rem">Agregar detalle de devolución</h3>
+  <form id="form-devolucion-proveedor-detalle" class="inline-form" th:action="@{/devoluciones-proveedor/detalle}" method="post" data-composite-pk="true">
+    <select name="devprovId" required>
+      <option value="">Devolución...</option>
+      <option th:each="dev : ${devoluciones}" th:value="${dev.id}" th:text="${dev.id}">1</option>
+    </select>
+    <select name="productoId" required>
+      <option value="">Producto...</option>
+      <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Producto</option>
+    </select>
+    <input name="cantidad" type="number" step="0.01" placeholder="Cantidad" required>
+    <input name="precio" type="number" step="0.01" placeholder="Precio" required>
+    <button type="submit">Guardar</button>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>Devolución ID</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="det : ${devolucionProveedorDetalles}">
+      <td th:text="${det.devolucionAProveedor?.id}">1</td>
+      <td th:text="${det.producto?.nombre}" th:data-productoId="${det.producto?.id}">Producto</td>
+      <td th:text="${#numbers.formatDecimal(det.devprovCantidad, 1, 2)}">0.00</td>
+      <td th:text="${#numbers.formatDecimal(det.precio, 1, 2)}">0.00</td>
+      <td class="actions">
+        <form th:action="@{/devoluciones-proveedor/detalle/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar detalle?');">
+          <input type="hidden" name="devprovId" th:value="${det.devolucionAProveedor?.id}">
+          <input type="hidden" name="productoId" th:value="${det.producto?.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(devolucionProveedorDetalles)}">
+      <td colspan="5">Sin datos todavía.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="empleados">
+  <h2>Empleados</h2>
+  <form id="form-empleado" class="inline-form" th:action="@{/empleados}" th:object="${empleadoForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre">
+    <input type="text" th:field="*{apellido}" placeholder="Apellido">
+    <input type="text" th:field="*{ci}" placeholder="CI">
+    <input type="number" th:field="*{sueldo}" placeholder="Sueldo" step="0.01">
+    <input type="text" th:field="*{direccion}" placeholder="Direccion">
+    <input type="text" th:field="*{telefono}" placeholder="Telefono">
+    <input type="date" th:field="*{fechaNacimiento}" placeholder="Nacimiento">
+    <input type="email" th:field="*{email}" placeholder="Email">
+    <select th:field="*{sexo}">
+      <option value="">Sexo...</option>
+      <option value="M">M</option>
+      <option value="F">F</option>
+    </select>
+    <input type="number" th:field="*{estado}" placeholder="Estado">
+    <select th:field="*{ciudad.id}">
+      <option value="">Ciudad...</option>
+      <option th:each="c : ${ciudades}" th:value="${c.id}" th:text="${c.nombre}"></option>
+    </select>
+    <input type="text" th:field="*{observacion}" placeholder="Observacion">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>CI</th>
+      <th>Sueldo</th>
+      <th>Dirección</th>
+      <th>Teléfono</th>
+      <th>Nacimiento</th>
+      <th>Email</th>
+      <th>Sexo</th>
+      <th>Estado</th>
+      <th>Ciudad</th>
+      <th>Observación</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="e : ${empleados}">
+      <td th:text="${e.id}">1</td>
+      <td th:text="${e.nombre}">Nombre</td>
+      <td th:text="${e.apellido}">Apellido</td>
+      <td th:text="${e.ci}">CI</td>
+      <td th:text="${#numbers.formatDecimal(e.sueldo, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+      <td th:text="${e.direccion}">Dirección</td>
+      <td th:text="${e.telefono}">Teléfono</td>
+      <td th:text="${e.fechaNacimiento}">Fecha Nac.</td>
+      <td th:text="${e.email}">Email</td>
+      <td th:text="${e.sexo}">S</td>
+      <td th:text="${e.estado}">1</td>
+      <td th:text="${e.ciudad?.nombre}">Ciudad</td>
+      <td th:text="${e.observacion}">Obs</td>
+      <td class="actions">
+        <form th:action="@{/empleados/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar empleado?');">
+          <input type="hidden" name="id" th:value="${e.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(empleados)}">
+      <td colspan="14">Sin datos todavia.</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="usuarios">
+  <h2>Usuarios</h2>
+  <form id="form-usuario" class="inline-form" th:action="@{/usuarios}" th:object="${usuarioForm}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <input type="text" th:field="*{nombre}" placeholder="Nombre de usuario" required>
+    <input type="password" name="contrasenaRaw" placeholder="Contraseña (dejar en blanco para no cambiar)">
+    <select th:field="*{tipo}" required>
+      <option value="">Tipo...</option>
+      <option value="ADMIN">Admin</option>
+      <option value="USER">User</option>
+    </select>
+    <select th:field="*{estado}" required>
+      <option value="">Estado...</option>
+      <option value="1">Activo</option>
+      <option value="0">Inactivo</option>
+    </select>
+    <select th:field="*{empleado.id}">
+      <option value="">Empleado (opcional)...</option>
+      <option th:each="e : ${empleados}" th:value="${e.id}" th:text="${e.nombre + ' ' + e.apellido}"></option>
+    </select>
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Empleado</th>
+       <th>Contraseña (Hash)</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${usuarios}">
+      <td th:text="${u.id}">1</td> 
+      <td th:text="${u.nombre}">usuario</td>
+      <td th:text="${u.tipo}">ADMIN</td>
+      <td th:text="${u.estado == 1 ? 'Activo' : 'Inactivo'}">Activo</td>
+      <td th:text="${u.empleado != null ? (u.empleado.nombre + ' ' + u.empleado.apellido) : 'N/D'}" th:data-empleado_id="${u.empleado?.id}">Empleado</td>
+      <td th:text="${u.contrasena}" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Contraseña</td>
+      <td class="actions">
+        <form th:action="@{/usuarios/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar usuario?');">
+          <input type="hidden" name="id" th:value="${u.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(usuarios)}">
+      <td colspan="7">Sin datos todavía.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="arqueos">
+  <h2>Arqueos</h2>
+  <form id="form-arqueo" class="inline-form" th:action="@{/arqueos}" th:object="${arqueoForm}" method="post">
+     <input type="hidden" th:field="*{id}">
+    <select th:field="*{caja.id}" required>
+      <option value="">Caja...</option>
+      <option th:each="c : ${cajas}" th:value="${c.id}" th:text="${c.descripcion}"></option>
+    </select>
+    <select th:field="*{usuario.id}" required>
+      <option value="">Usuario...</option>
+      <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}"></option>
+    </select>
+    <input type="number" th:field="*{montoInicio}" placeholder="Monto Inicio" step="0.01">
+    <input type="date" th:field="*{fecha}">
+    <input type="time" th:field="*{horaDesde}">
+    <input type="text" th:field="*{estado}" placeholder="Estado (A/C)" maxlength="1">
+  </form>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Caja</th>
+      <th>Usuario</th>
+      <th>Fecha</th>
+      <th>Monto Inicio</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="a : ${arqueos}">
+      <td th:text="${a.id}">1</td>
+      <td th:text="${a.caja?.descripcion}" th:data-caja_id="${a.caja?.id}">Caja</td>
+      <td th:text="${a.usuario?.nombre}" th:data-usuario_id="${a.usuario?.id}">Usuario</td>
+      <td th:text="${a.fecha}">2025-01-01</td>
+      <td th:text="${#numbers.formatDecimal(a.montoInicio,1,2)}">0.00</td>
+      <td th:text="${a.estado}">A</td>
+      <td class="actions">
+        <form th:action="@{/arqueos/eliminar}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar arqueo?');">
+          <input type="hidden" name="id" th:value="${a.id}">
+          <button type="submit" class="btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    <tr class="empty" th:if="${#lists.isEmpty(arqueos)}">
+      <td colspan="7">Sin datos todavía.</td> </tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  <p>Configura la conexion a MySQL en <code>src/main/resources/application.properties</code> y ejecuta la aplicacion con <code>mvn spring-boot:run</code>.</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // --- CONFIGURACIÓN DE SECCIONES Y FORMULARIOS ---
+  const configs = [
+    {section: '#clientes', formId: 'form-cliente', pk: 'id', del: '/clientes/eliminar', cols: {id:0, nombre:1, apellido:2, ci:3, email:4, telefono:5, direccion:6, sexo:7, 'ciudad.id':8}},
+    {section: '#productos', formId: 'form-producto', pk: 'id', del: '/productos/eliminar', cols: {id:0, nombre:1, descripcion:2, 'marca_id':3, precioCompra:4, iva:5}},
+    {section: '#marcas', formId: 'form-marca', pk: 'id', del: '/marcas/eliminar', cols: {id:0, descripcion:1}},
+    {section: '#monedas', formId: 'form-moneda', pk: 'id', del: '/monedas/eliminar', cols: {id:0, descripcion:1, sigla:2}},
+    {section: '#departamentos', formId: 'form-departamento', pk: 'id', del: '/departamentos/eliminar', cols: {id:0, nombre:1, capital:2}},
+    {section: '#ciudades', formId: 'form-ciudad', pk: 'id', del: '/ciudades/eliminar', cols: {id:0, nombre:1, 'departamento_id':2}},
+    {section: '#cajas', formId: 'form-caja', pk: 'id', del:'/cajas/eliminar', cols: {id:0, descripcion:1}},
+    {section: '#proveedores', formId: 'form-proveedor', pk: 'id', del: '/proveedores/eliminar', cols: {id:0, nombre:1, ruc:2, direccion:3, telefono:4, pagWeb:5, email:6, observacion:7, 'ciudad_id':8}},
+    {section: '#stock', formId: 'form-stock', pk: 'productId', del: '/stocks/eliminar', cols: {productId:0, cantidadMin:1, cantidadMax:2, cantidadActual:3}},
+    {section: '#ventas', formId: 'form-venta', pk: 'id', del: '/ventas/eliminar', cols: {id:0, fechaFacturacion:1, 'cliente_id':2, tipo:3, estado:4}},
+    {section: '#pedidos', formId: 'form-pedido-cliente', pk: 'id', del: '/pedidos/eliminar', cols: {id:0, 'cliente_id':1, fechaPedido:2, estado:3, 'usuario_id':4}},
+    {section: '#compras', formId: 'form-compra', pk: 'numeroFactura', del: '/compras/eliminar', cols: {numeroFactura:0, fecha:1, 'proveedor_id':2, tipo:3, estado:4}},
+    {section: '#pagos', formId: 'form-pago', pk: 'id', del: '/pagos/eliminar', cols: {id:0, fecha:1, monto:2, 'ordenDePago_numero':3, 'usuario_id':4, estado:5}},
+    {section: '#pagos', formId: 'form-orden-pago', pk: 'numero', del: '/ordenes-pago/eliminar', tableIndex: 1, cols: {numero:0, fecha:1, 'usuario_id':2, estado:3}},
+    {section: '#presupuestos', formId: 'form-presupuesto', pk: 'id', del: '/presupuestos/eliminar', cols: {id:0, 'cliente_id':1, fecha:2, estado:3}},
+    {section: '#empleados', formId: 'form-empleado', pk: 'id', del: '/empleados/eliminar', cols: {id:0, nombre:1, apellido:2, ci:3, sueldo:4, direccion:5, telefono:6, fechaNacimiento:7, email:8, sexo:9, estado:10, ciudad:11, observacion:12}},
+    {section: '#usuarios', formId: 'form-usuario', pk: 'id', del: '/usuarios/eliminar', cols: {id:0, nombre:1, tipo:2, estado:3, 'empleado_id':4, contrasena:5}},
+    {section: '#arqueos', formId: 'form-arqueo', pk: 'id', del: '/arqueos/eliminar', cols: {id:0, 'caja_id':1, 'usuario_id':2, fecha:3, montoInicio:4, estado:5}},
+    {section: '#ajustes', formId: 'form-ajuste', pk: 'id', del: '/ajustes/eliminar', cols: {id:0, estado:1, fecha:2, 'usuario_id':3}},
+    {section: '#cotizaciones', formId: 'form-cotizacion', pk: 'id', del: '/cotizaciones/eliminar', cols: {id:0, fecha:1, 'moneda_id':2, precompra:3, preventa:4}},
+    {section: '#cobrotipos', formId: 'form-cobrotipo', pk: 'id', del: '/cobro-tipos/eliminar', cols: {id:0, nombre:1, descripcion:2}},
+    {section: '#ajustetipos', formId: 'form-ajustetipo', pk: 'id', del: '/ajuste-tipos/eliminar', cols: {id:0, tipo:1, motivo:2}},
+    {section: '#compras', formId: 'form-pedido-proveedor', pk: 'id', del: '/pedidos-proveedor/eliminar', tableIndex: 2, cols: {id:0, 'proveedorId':1, fecha:2, estado:3, 'usuarioId':4}},
+    {section: '#compras', formId: 'form-orden-compra', pk: 'id', del: '/ordenes-compra/eliminar', tableIndex: 5, cols: {id:0, 'pedprovId':1, fecha:2, hora:3, 'usuarioId':4, estado:5}},
+    {section: '#cobros', formId: 'form-cobro', pk: 'id', del: '/cobros/eliminar', cols: {id:0, 'arqueo_id':1, 'usuario_id':2, fecha:3, hora:4, estado:5}},
+    {section: '#devoluciones-proveedor', formId: 'form-devolucion-proveedor', pk: 'id', del: '/devoluciones-proveedor/eliminar', cols: {id:0, 'proveedor_id':1, fecha:2, 'usuario_id':3, estado:4}},
+    // Formularios de detalle (sin botones de edición/eliminación en tabla)
+    {section: '#presupuesto-detalle', formId: 'form-presupuesto-detalle', cols: {presId:0, prodId:1, cantidad:2, precioUnitario:3}},
+    {section: '#orden-pago-detalle', formId: 'form-orden-pago-detalle', cols: {ordpagNumero:0, cuotaNumero:1, compNumerofactura:2, monto:3}},
+    {section: '#ventas', formId: 'form-venta-detalle', tableIndex: 1, cols: {venId:0, prodId:1, cantidad:2, precioUnitario:3}},
+    {section: '#cobros', formId: 'form-cobro-detalle', tableIndex: 1, cols: {cobId:0, venId:1, cuotaNumero:2}},
+    {section: '#pedidos', formId: 'form-pedido-cliente-detalle', tableIndex: 1, cols: {pedcliId:0, 'stockProductProdId':1, peddetCantidad:2, peddetPrecio:3}},
+    {section: '#compras', formId: 'form-compra-detalle', tableIndex: 1, noTableActions: true, cols: {compNumerofactura:0, 'stockProductoProdId':1, cantidad:2, precioUnitario:3}},
+    {section: '#compras', formId: 'form-pedido-proveedor-detalle', tableIndex: 3, cols: {pedprovId:0, 'productoId':1, cantidad:2, precioUnitario:3}},
+    {section: '#compras', formId: 'form-orden-compra-detalle', tableIndex: 4, cols: {ordcompId:0, 'productoId':1, cantidad:2, precioUnitario:3}},
+    {section: '#ajustes', formId: 'form-ajuste-detalle', tableIndex: 1, cols: {ajusId:0, ajustipId:1, prodId:1, cantidad:3}},
+    {section: '#cuentas', formId: 'form-cuenta-cobrar', cols: {venId:0, cuotaNumero:1, monto:2, fechaVencimiento:3, estado:4}},
+    {section: '#cuentas', formId: 'form-cuenta-pagar', tableIndex: 1, cols: {compraNumerofactura:0, cuenpagNumerocuota:1, monto:2, estado:3}},
+    {section: '#cobro-por', formId: 'form-cobro-por', tableIndex: 0, cols: {cobId:0, venId:1, cuotaNumero:2, cobtipId:3, monto:4}},
+    {section: '#devoluciones-proveedor', formId: 'form-devolucion-proveedor-detalle', tableIndex: 1, cols: {devprovId:0, productoId:1, cantidad:2, precio:3}},
+  ];
+
+  // --- FUNCIÓN GLOBAL PARA EDITAR ---
+  window.editarDesde = function(btn) {
+    const formId = btn.dataset.form;
+    const form = document.getElementById(formId);
+    if (!form) { console.error('Formulario no encontrado para editar:', formId); return; }
+
+    form.reset();
+    form.querySelectorAll('input[type="hidden"]').forEach(el => el.value = '');
+
+    function setField(name, value) {
+      const fieldName = name.includes('_id') ? name.replace('_id', '.id') : name;
+      const el = form.querySelector(`[name="${fieldName}"], [th\\:field="*{${fieldName}}"]`);
+      if (el) {
+        el.value = value ?? '';
+      }
+    }
+
+    Object.keys(btn.dataset).forEach(key => {
+      if (key !== 'form') {
+        setField(key, btn.dataset[key]);
+      }
+    });
+
+    const saveBtn = form.querySelector('.btn-save');
+    if (saveBtn) saveBtn.textContent = 'Modificar';
+
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const firstInput = form.querySelector('input:not([type=hidden]),select,textarea');
+    if (firstInput) firstInput.focus();
+  };
+
+  // --- PROCESAMIENTO PRINCIPAL ---
+  configs.forEach(cfg => {
+    const section = document.querySelector(cfg.section);
+    if (!section) return;
+
+    const form = document.getElementById(cfg.formId);
+    if (form) {
+      // 1. Añadir botonera a los formularios
+      let toolbar = form.querySelector('.form-actions');
+      if (!toolbar) {
+        toolbar = document.createElement('div');
+        toolbar.className = 'form-actions';
+        form.appendChild(toolbar);
+      }
+
+      if (!toolbar.querySelector('.btn-save')) {
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'submit';
+        saveBtn.textContent = 'Guardar';
+        saveBtn.className = 'btn-primary btn-save'; // Usamos clases para estilo consistente
+        toolbar.appendChild(saveBtn);
+      }
+
+      if (cfg.del && !toolbar.querySelector('.btn-delete')) {
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.textContent = 'Eliminar';
+        delBtn.className = 'btn-danger btn-delete';
+        delBtn.addEventListener('click', () => {
+          const pkInput = form.querySelector(`[name="${cfg.pk}"], [th\\:field="*{${cfg.pk}}"]`);
+          let pkVal = pkInput?.value?.trim();
+
+          if (form.hasAttribute('data-composite-pk')) {
+             alert('Para eliminar registros con clave compuesta, usa el botón "Eliminar" en la fila correspondiente.');
+             return;
+          } else {
+            if (!pkVal) {
+              alert(`Primero selecciona un registro para eliminar (falta ${cfg.pk}).`);
+              return;
+            }
+          }
+          if (confirm(`¿Seguro que quieres eliminar el registro con ${cfg.pk} ${pkVal}?`)) {
+            const delForm = document.createElement('form');
+            delForm.method = 'post';
+            delForm.action = cfg.del;
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = cfg.pk;
+            hiddenInput.value = pkVal;
+            delForm.appendChild(hiddenInput);
+            document.body.appendChild(delForm);
+            delForm.submit();
+          }
+        });
+        toolbar.appendChild(delBtn);
+      }
+
+      if (!toolbar.querySelector('.btn-clear')) {
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.textContent = 'Limpiar';
+        clearBtn.className = 'btn-secondary btn-clear';
+        clearBtn.addEventListener('click', () => {
+          form.reset();
+          form.querySelectorAll('input[type="hidden"]').forEach(el => el.value = '');
+          const saveBtn = form.querySelector('.btn-save');
+          if (saveBtn) saveBtn.textContent = 'Guardar';
+          const firstInput = form.querySelector('input:not([type=hidden]),select,textarea');
+          if (firstInput) firstInput.focus();
+        });
+        toolbar.appendChild(clearBtn);
+      }
+    }
+
+    if (!cfg.noTableActions && cfg.cols) {
+      const tables = section.querySelectorAll('table');
+      const table = tables[cfg.tableIndex || 0];
+      if (!table) return;
+
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        if (tr.classList.contains('empty')) return; // Saltar filas vacías
+        let actionsCell = tr.querySelector('td:last-of-type'); // Obtener la última celda para las acciones
+        if (!actionsCell) return;
+
+        // --- Botón Modificar ---
+        // Solo añadir si no existe ya un .btn-edit
+        if (!actionsCell.querySelector('.btn-edit')) {
+          const editBtn = document.createElement('button');
+          editBtn.type = 'button';
+          editBtn.textContent = 'Modificar';
+          editBtn.className = 'btn-edit';
+          editBtn.dataset.form = cfg.formId;
+
+          Object.entries(cfg.cols).forEach(([name, idx]) => {
+            const cell = tr.cells[idx];
+            if (!cell) return;
+            // Prioriza un `data-attribute` en la celda (para IDs de relaciones), si no, usa el texto.
+            const dataValue = Object.values(cell.dataset).find(v => v) || cell.dataset[name.toLowerCase()];
+            // Dataset keys cannot contain dots, so normalize: replace '.' with '_' when setting dataset keys
+            const datasetKey = name.replace(/\./g, '_');
+            editBtn.dataset[datasetKey] = dataValue !== undefined ? dataValue : cell.textContent.trim();
+          });
+          editBtn.addEventListener('click', (e) => editarDesde(e.target));
+          // Insertar el botón de editar antes del contenido existente (p.ej. antes del formulario eliminar)
+          actionsCell.insertBefore(editBtn, actionsCell.firstChild);
+        }
+
+        // --- Botón Eliminar (solo si no existe ya un formulario de eliminación en la celda) ---
+        if (cfg.del && cfg.pk && !actionsCell.querySelector('form')) {
+            const pkValue = tr.cells[cfg.cols[cfg.pk]]?.textContent.trim();
+            if (!pkValue) return;
+
+            const delForm = document.createElement('form');
+            delForm.method = 'post';
+            delForm.action = cfg.del;
+            delForm.style.display = 'inline';
+            delForm.addEventListener('submit', (e) => {
+              if (!confirm(`¿Seguro que quieres eliminar el registro con ID ${pkValue}?`)) {
+                e.preventDefault();
+              }
+            });
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = cfg.pk;
+            hiddenInput.value = pkValue;
+            delForm.appendChild(hiddenInput);
+
+            const delBtn = document.createElement('button');
+            delBtn.type = 'submit';
+            delBtn.textContent = 'Eliminar';
+            delBtn.className = 'btn-danger';
+            delForm.appendChild(delBtn);
+            actionsCell.appendChild(delForm);
+        }
+      });
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion Empresarial</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<nav style='position:sticky;top:0;z-index:10;background:#111827;color:#fff;padding:.5rem 1rem;display:flex;gap:1rem;'>
+  <a href='/' style='color:#fff;text-decoration:none;font-weight:600'>Dashboard</a>
+  <a href='/alta/departamento' target='_blank' style='color:#fff;text-decoration:none;'>Alta Departamento</a>
+  <a href='/alta/ciudad' target='_blank' style='color:#fff;text-decoration:none;'>Alta Ciudad</a>
+  <a href='#clientes' style='color:#fff;text-decoration:none;'>Alta Cliente</a>
+</nav>
+
+<header>
+    <h1>Panel de gestion empresarial</h1>
+    <p>Resumen en vivo de las tablas principales del sistema.</p>
+</header>
+
+<section class="resumen">
+    <h2>Resumen rapido</h2>
+    <div class="cards">
+        <div class="card">
+            <span class="card-title">Clientes</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Productos</span>
+            <span class="card-value">2</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Proveedores</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Stock</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Ventas</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Compras</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Pedidos de clientes</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Pedidos a proveedores</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Cuentas por cobrar</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Cuentas por pagar</span>
+            <span class="card-value">0</span>
+        </div>
+        <div class="card">
+            <span class="card-title">Pagos</span>
+            <span class="card-value">0</span>
+        </div>
+    </div>
+</section>
+
+
+
+
+<section>
+    <h2>Clientes</h2>
+    <form class="inline-form" action="/clientes" method="post">
+        <input type="text" placeholder="Nombre" required id="nombre" name="nombre" value="">
+        <input type="text" placeholder="Apellido" required id="apellido" name="apellido" value="">
+    <input type="text" placeholder="Documento (CI)" required id="ci" name="ci" value="">
+        <input type="email" placeholder="Correo electronico" id="email" name="email" value="">
+        <input type="text" placeholder="Teléfono" id="telefono" name="telefono" value="">
+        <input type="text" placeholder="Dirección" id="direccion" name="direccion" value="">
+        <select required id="sexo" name="sexo"><option value="">Sexo...</option><option value="M">M</option><option value="F">F</option></select>
+        <select required id="ciudad.id" name="ciudad.id">
+            <option value="">Ciudad...</option>
+            
+        </select>
+        <button type="submit">Agregar cliente</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>CI</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Sexo</th>
+            <th>Ciudad</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="9">Sin datos todavia.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <section>
+    <h2>Productos</h2>
+    <form class="inline-form" action="/productos" method="post">
+        <input type="text" placeholder="Código (ID, hasta 13 caracteres)" required id="id" name="id" value="">
+        <select required id="marca.id" name="marca.id">
+            <option value="">Marca...</option>
+            <option value="1">MarcaPrueba</option>
+            <option value="2">MarcaPrueba2</option>
+        </select>
+        <input type="text" placeholder="Nombre" required id="nombre" name="nombre" value="">
+        <input type="text" placeholder="Descripción" id="descripcion" name="descripcion" value="">
+        <input type="number" placeholder="Precio de compra" min="0" step="0.01" required id="precioCompra" name="precioCompra" value="">
+        <input type="text" placeholder="IVA (ej. 10%)" id="iva" name="iva" value="">
+        <button type="submit">Agregar producto</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Marca</th>
+            <th>Precio Compra</th>
+            <th>IVA</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>P-0001</td>
+            <td>ProductoPrueba</td>
+            <td></td>
+            <td>MarcaPrueba</td>
+            <td>10,50</td>
+            <td>12</td>
+        </tr>
+        <tr>
+            <td>P-0002</td>
+            <td>ProductoPrueba2</td>
+            <td></td>
+            <td>MarcaPrueba</td>
+            <td>20,50</td>
+            <td>12</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Marcas</h2>
+    <form class="inline-form" action="/marcas" method="post">
+        <input type="text" placeholder="Descripción" required id="descripcion" name="descripcion" value="">
+        <button type="submit">Agregar marca</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descripción</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>MarcaPrueba</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>MarcaPrueba2</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Proveedores</h2>
+    <form class="inline-form" action="/proveedores" method="post">
+        <input type="text" placeholder="Nombre" required id="nombre" name="nombre" value="">
+        <input type="text" placeholder="RUC" required id="ruc" name="ruc" value="">
+        <input type="text" placeholder="Dirección" id="direccion" name="direccion" value="">
+        <input type="text" placeholder="Página web" id="pagWeb" name="pagWeb" value="">
+        <input type="email" placeholder="Correo electronico" id="email" name="email" value="">
+        <input type="text" placeholder="Teléfono" id="telefono" name="telefono" value="">
+        <input type="text" placeholder="Observación" id="observacion" name="observacion" value="">
+        <select id="ciudad.id" name="ciudad.id">
+            <option value="">Ciudad...</option>
+            
+        </select>
+        <button type="submit">Agregar proveedor</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>RUC</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Página Web</th>
+            <th>Correo</th>
+            <th>Observación</th>
+            <th>Ciudad</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="9">Sin datos todavia.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Stock</h2>\n    <table>\n        <thead>\n        <tr>\n            <th>Producto</th>\n            <th>Cant.</th>\n            <th>Bloqueado</th>\n        </tr>\n        </thead>\n        <tbody>\n        \n        <tr class="empty">\n            <td colspan="3">Sin datos todavia.</td>\n        </tr>\n        </tbody>\n    </table>\n</section>
+
+<section>
+    <h2>Ventas</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="4">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Compras</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Total</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="4">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Cuentas por cobrar</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Venta</th>
+            <th>Monto</th>
+            <th>Saldo</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="4">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Cuentas por pagar</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Compra</th>
+            <th>Monto</th>
+            <th>Saldo</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="4">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Pagos registrados</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="3">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Cobros registrados</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="3">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Cotizaciones</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Sexo</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        <tr class="empty">
+            <td colspan="4">Sin datos todavi­a.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<footer>
+    <p>Configura la conexion a MySQL en <code>src/main/resources/application.properties</code> y ejecuta la aplicacion
+        con <code>mvn spring-boot:run</code>.</p>
+</footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

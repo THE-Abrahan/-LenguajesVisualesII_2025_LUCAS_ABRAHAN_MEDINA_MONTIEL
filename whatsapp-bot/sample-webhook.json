@@ -1,0 +1,19 @@
+{
+  "entry": [
+    {
+      "changes": [
+        {
+          "value": {
+            "messages": [
+              {
+                "from": "595981170584",
+                "text": { "body": "SALDO 1234567" }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+

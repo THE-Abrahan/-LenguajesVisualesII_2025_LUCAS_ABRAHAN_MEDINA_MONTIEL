@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; }
+        .login-container { padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .login-container h2 { text-align: center; margin-bottom: 1.5rem; }
+        .login-container .alert { margin-bottom: 1rem; }
+        .login-container form { display: flex; flex-direction: column; }
+        .login-container input { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; }
+        .login-container button { padding: 0.75rem; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .login-container button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Iniciar Sesión</h2>
+
+    <div th:if="${param.error}" class="alert error">
+        Usuario o contraseña incorrectos.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <input type="text" name="username" placeholder="Nombre de Usuario" required autofocus />
+        <input type="password" name="password" placeholder="Contraseña" required />
+        <button type="submit">Entrar</button>
+    </form>
+</div>
+</body>
+</html>

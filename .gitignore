@@ -1,0 +1,19 @@
+# Maven
+target/
+
+# Logs
+mvn-run.log
+mvn-run.err
+
+# IDEs/Editors
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local env files
+whatsapp-bot/.env
+
