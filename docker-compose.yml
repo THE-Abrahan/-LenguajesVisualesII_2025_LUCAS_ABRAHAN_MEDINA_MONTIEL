@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  whatsapp-bot:
+    build:
+      context: ./whatsapp-bot
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - RELOAD=false
+      - DEBUG=true
+    volumes:
+      - ./whatsapp-bot/data:/app/data
+      - ./whatsapp-bot/.env:/app/.env:ro
+    restart: unless-stopped

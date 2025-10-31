@@ -1,0 +1,1 @@
+cd "C:\Users\lucas\Documents\proyecto_gestion_empresa\whatsapp-bot" ; python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000

@@ -16,4 +16,9 @@ Thumbs.db
 
 # Local env files
 whatsapp-bot/.env
+whatsapp-bot/.venv/
+whatsapp-bot/data/users.json
+# Docker artifacts
+docker-compose.override.yml
+
 
